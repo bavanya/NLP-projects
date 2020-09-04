@@ -3,6 +3,7 @@ import re
 import nltk
 from nltk.tokenize import word_tokenize
 import heapq
+import preprocessor as p
 nltk.download('punkt')
 
 def get_tweets() :
@@ -11,7 +12,7 @@ def get_tweets() :
   tweetCriteria = got.manager.TweetCriteria().setQuerySearch('covid')\
                                            .setSince("2019-08-01")\
                                            .setUntil("2020-09-02")\
-                                           .setMaxTweets(1000)
+                                           .setMaxTweets(5)
   tweets = got.manager.TweetManager.getTweets(tweetCriteria)
   text_tweets = [[tweet.text] for tweet in tweets]
 
@@ -22,9 +23,9 @@ def get_tweets() :
     text = text_tweets[i][0] + " " + text
 
   #data preprocessing
-  text_cleaner = re.sub(r'\[[0-9]*\]', ' ', text)
-  text_cleaned = re.sub(r'\s+', ' ', text_cleaner)
-  #TODO: more aggressive cleaning.
+  text_cleaned = re.sub(r'\[[0-9]*\]', ' ', text)
+  text_cleaned = re.sub(r'\s+', ' ', text_cleaned)
+  text_cleaned = p.clean(text_cleaned)
 
   #tokenizing the string
   l = word_tokenize(text_cleaned)
